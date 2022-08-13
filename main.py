@@ -103,6 +103,9 @@ if __name__ == '__main__':
     df_final = df_final.drop(labels=dif, axis=1)
     df_final['indice'] = [index for index in range(len(df_final))]
 
+    # Pega apenas as colunas necessárias para envio ao banco de dados
+    df_final = df_final.loc[(df_final['funilnegociacao'] == 'Negociações Máquinas') | (df_final['funilnegociacao'] == 'Negociações ROBÓTICA')]
+
     # Transforma o Dataframe final em tupla -> formato para inserção no banco
     sql = [tuple(i) for i in df_final.to_numpy()]
 

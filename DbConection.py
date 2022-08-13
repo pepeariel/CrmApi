@@ -18,16 +18,16 @@ def create_connection(db_file, SECRET_DB_PASSWORD):
 def insert_query(con, sql, cursor):
 
     # Comando para inserir novos dados no banco
-    query = '''INSERT INTO CRM_POWERBI (indice, CategoriaNegociacao,FunilNegociacao,IdEtapaNegociacao,EtapaNegociacao,StatusNegociacao,
-                IdUsuarioConclusao, NomeUsuarioConclusao,IdExternoUsuarioConclusao,ConcluidaEm,PrevisaoFechamento,
-                MotivoGanhoPerda,SubmotivoGanhoPerda,Valor,ValorOutros,Observacoes,VisivelPara,Ranking,IdUsuarioInclusao,
-                NomeUsuarioInclusao,IdExternoUsuarioInclusao,IdUsuarioAtualizacao,NomeUsuarioAtualizacao,IdExternoUsuarioAtualizacao,
-                ListProduto,ListCampoUsuario,ListIdResponsaveis,ListNomeResponsaveis,ListIdExternoResponsaveis,ListTags,IdInterno, 
-                IdExterno,Nome,Descricao,CriadaEm,AtualizadaEm,AdicionarProdutos,ContatoIdInterno,ContatoIdExterno,ContatoNome,
-                ContatoCnpjCpf,OrganizacaoIdInterno,OrganizacaoIdExterno,OrganizacaoNome,OrganizacaoCnpjCpf,Organizacao,
-                NOVA_TAG, MODELO,QNTD)
-
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+    query = '''INSERT INTO CRM_POWERBI (indice, CategoriaNegociacao,FunilNegociacao,EtapaNegociacao,StatusNegociacao,
+                                        NomeUsuarioConclusao,ConcluidaEm,PrevisaoFechamento,
+                                        MotivoGanhoPerda,SubmotivoGanhoPerda,Valor,ValorOutros,Observacoes,
+                                        NomeUsuarioInclusao,NomeUsuarioAtualizacao,
+                                        ListProduto,ListNomeResponsaveis,ListTags,IdInterno, 
+                                        Nome,Descricao,CriadaEm,AtualizadaEm,ContatoIdInterno,ContatoNome,
+                                        ContatoCnpjCpf,OrganizacaoNome,Organizacao,
+                                        NOVA_TAG, MODELO,QNTD)
+            
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 '''
     # Inserir dados da tupla sql no banco AWS
     print('Inserindo dados no banco...')
