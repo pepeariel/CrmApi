@@ -39,25 +39,25 @@ if __name__ == '__main__':
 
     df_final['ListTags'] = df_final['ListTags'].apply(GetDictKey, chave='Descricao')
 
-    df_final['NOVA_TAG'] = df_final['ListTags'].apply(GetMachineTypo, intersecao='Nan')
+    df_final['NOVA_TAG'] = df_final['ListTags'].apply(GetMachineTypo, intersecao='OUTROS')
 
     replace_representantes = {
         'Edison Boscaini Griti': 'ÉDISON BOSCAINI',
         'Joel Sprenger': 'JOEL SPRENGER',
-        'Odirlei Costa': 'ODIRLEI',
+        'Odirlei Costa': 'ODIRLEI COSTA',
         'Adriano Ossani': 'ADRIANO OSSANI',
         'Gustavo Castelhano': 'GUSTAVO CASTELHANO',
         'Reginaldo Maia': 'REGINALDO MAIA',
         'Vanderlei Bedin': 'VANDERLEI BEDIN',
-        'Alexandre Wanzuita': 'ALEXANDRE',
+        'Alexandre Wanzuita': 'ALEXANDRE WANZUITA',
         'Henrique Albuquerque': 'HENRIQUE ALBUQUERQUE',
         'Guilherme Simas Spotti': 'GUILHERME SPOTTI',
         'GUSTAVO HENRIQUE DE ALBUQUQUERQUE': 'GUSTAVO ALBUQUERQUE',
-        'Rafael- Industria 4.0': 'RAFAEL',
+        'Rafael- Industria 4.0': 'RAFAEL SIMEONI',
         'Maurus Joenk': 'MAURUS JOENK',
         'Edivaldo Dallepiane': 'EDIVALDO DALLEPIANE',
-        'Sergio Miwa': 'SERGIO MARQUES MIWA',
-        'Carlos Leandro': 'CARLOS',
+        'Sergio Miwa': 'SERGIO MIWA',
+        'Carlos Leandro': 'CARLOS LEANDRO',
         'Herberte Piassi': 'HERBERTE'
     }
 

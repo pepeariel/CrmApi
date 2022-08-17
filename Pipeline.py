@@ -69,7 +69,7 @@ class AsyncIO:
 
 def GetMachineTypo (series, intersecao):
     for palavra in series:
-        if ('INJETORA' in palavra):
+        if ('INJETORA' in palavra) or ('INJEÇÃO' in palavra):
             intersecao = 'INJETORA'
             break
         elif ('CENTRO' in palavra):
@@ -78,35 +78,20 @@ def GetMachineTypo (series, intersecao):
         elif ('TORNO' in palavra):
             intersecao = 'TORNO'
             break
-        elif ('ROBO' in palavra) or ('ROBÔ' in palavra) or ('YR' in palavra) or ('YF' in palavra):
+        elif ('ROBO' in palavra) or ('ROBÔ' in palavra):
             intersecao = 'ROBÔ'
             break
         elif ('CELULA' in palavra) or ('CÉLULA' in palavra):
             intersecao = 'CÉLULA ROBOTIZADA'
             break
-        elif ('ELETROEROSÃO' in palavra) or ('ELETROEROSAO' in palavra) or ('ELETRO-EROSAO' in palavra) or ('ELETRO-EROSÃO' in palavra) or ('ELETRO EROSÃO' in palavra) or ('ELETRO EROSAO' in palavra):
-            intersecao = 'ELETROEROSÃO'
-            break
-        elif ('RETIFICA' in palavra) or ('RETÍFICA' in palavra):
-            intersecao = 'RETÍFICA'
-            break
-        elif ('RETIFICA' in palavra) or ('RETÍFICA' in palavra):
-            intersecao = 'RETÍFICA'
-            break
         elif ('LASER' in palavra):
             intersecao = 'LASER'
-            break
-        elif ('FRESADORA' in palavra):
-            intersecao = 'FRESADORA'
-            break
-        elif ('MANDRILADORA' in palavra):
-            intersecao = 'MANDRILADORA'
             break
         elif ('AUTOMAÇÃO' in palavra):
             intersecao = 'CÉLULA ROBOTIZADA'
             break
         else:
-            intersecao = 'ACESSÓRIOS'
+            intersecao = 'OUTROS'
 
     return intersecao
 
