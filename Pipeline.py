@@ -10,7 +10,7 @@ class AsyncIO:
     def __init__(self, SECRET_API_KEY):
         self.results = [] # Lista com os ids unicos de cada negociação
         self.neg = [] # Lista com as negociações - é uma lista de requisições Json
-        self.pag = [i for i in range(1,100)] # numero de paginas a serem requisitadas - cada pag possui 100 negociações
+        self.pag = [i for i in range(1,115)] # numero de paginas a serem requisitadas - cada pag possui 100 negociações
         self.dataInicial = '2019/01/01'
         self.filter = {'statusNegociacao' : 'Ganha|Perdida|Pendente'}
         self.idExterno = str()
@@ -74,6 +74,9 @@ def GetMachineTypo (series, intersecao):
             break
         elif ('CENTRO' in palavra):
             intersecao = 'CENTRO'
+            break
+        elif ('EXTRUSORA' in palavra) or ('EXTRUSÃO' in palavra):
+            intersecao = 'EXTRUSÃO'
             break
         elif ('TORNO' in palavra):
             intersecao = 'TORNO'
