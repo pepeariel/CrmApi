@@ -81,7 +81,7 @@ def GetMachineTypo (series, intersecao):
         elif ('TORNO' in palavra):
             intersecao = 'TORNO'
             break
-        elif ('ROBO' in palavra) or ('ROBÔ' in palavra):
+        elif ('ROBO' in palavra) or ('ROBÔ' in palavra) or ('robótica' in palavra) or ('ROBÓTICA' in palavra):
             intersecao = 'ROBÔ'
             break
         elif ('CELULA' in palavra) or ('CÉLULA' in palavra):
