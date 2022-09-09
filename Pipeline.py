@@ -39,16 +39,16 @@ class AsyncIO:
 
     async def GetIdOfNegociacoesGanhas(self):
         async with aiohttp.ClientSession() as session:
-            tasks = AsyncIO.get_tasks(self,session)
+            tasks = AsyncIO.get_tasks(self, session)
             responses = await asyncio.gather(*tasks)
             for r in responses:
                 requested_id = await r.json()
-                if requested_id['HasMore'] == True:
+                if len(requested_id['ListIdInterno']) > 0: # Verifica se existe algum registro para "apendar"
                     self.results.append(requested_id)
 
     async def GetlistofNegociacoes(self):
         async with aiohttp.ClientSession() as session:
-            tasks = AsyncIO.taskNegociacao(self,session)
+            tasks = AsyncIO.taskNegociacao(self, session)
             responses = await asyncio.gather(*tasks)
             for r in responses:
                 requested_id = await r.json()
