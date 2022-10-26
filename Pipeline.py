@@ -1,7 +1,7 @@
 import asyncio
 import aiohttp
 import pandas as pd
-
+import numpy as np
 
 class AsyncIO:
 
@@ -67,35 +67,36 @@ class AsyncIO:
             self.df_negociacoes = pd.concat([self.df_negociacoes, n])
         return self.df_negociacoes
 
-def GetMachineTypo (series, intersecao):
-    for palavra in series:
-        if ('INJETORA' in palavra) or ('INJEÇÃO' in palavra):
-            intersecao = 'INJETORA'
-            break
-        elif ('CENTRO' in palavra):
-            intersecao = 'CENTRO'
-            break
-        elif ('SOPRADORA' in palavra) or ('EXTRUSÃO' in palavra) or ('SOPRO' in palavra) or ('EXTRUSORA' in palavra):
-            intersecao = 'EXTRUSÃO'
-            break
-        elif ('TORNO' in palavra):
-            intersecao = 'TORNO'
-            break
-        elif ('ROBO' in palavra) or ('ROBÔ' in palavra) or ('robótica' in palavra) or ('ROBÓTICA' in palavra):
-            intersecao = 'ROBÔ'
-            break
-        elif ('CELULA' in palavra) or ('CÉLULA' in palavra):
-            intersecao = 'CÉLULA ROBOTIZADA'
-            break
-        elif ('LASER' in palavra):
-            intersecao = 'LASER'
-            break
-        elif ('AUTOMAÇÃO' in palavra):
-            intersecao = 'CÉLULA ROBOTIZADA'
-            break
-        else:
-            intersecao = 'OUTROS'
+def GetMachineTypo (series):
+    intersecao = 'OUTROS'
 
+    if 'PERIFÉRICOS' in series:
+        intersecao = 'ACESSÓRIOS'
+            
+    elif ('INJETORA' in series) or ('INJEÇÃO' in series):
+        intersecao = 'INJETORA'    
+            
+    elif ('CENTRO' in series):
+        intersecao = 'CENTRO'       
+            
+    elif ('SOPRADORA' in series) or ('EXTRUSÃO' in series) or ('SOPRO' in series) or ('EXTRUSORA' in series):
+        intersecao = 'EXTRUSÃO'
+            
+    elif ('TORNO' in series):
+        intersecao = 'TORNO'
+            
+    elif ('ROBO' in series) or ('ROBÔ' in series) or ('ROBÓTICA' in series):
+        intersecao = 'ROBÔ'   
+            
+    elif ('CELULA' in series) or ('CÉLULA' in series):
+        intersecao = 'CÉLULA ROBOTIZADA'    
+            
+    elif ('LASER' in series):
+        intersecao = 'LASER'
+            
+    elif ('AUTOMAÇÃO' in series):
+        intersecao = 'CÉLULA ROBOTIZADA'
+            
     return intersecao
 
 def FiltraDatas(base, coluna_data, data_inicial, data_final):
@@ -119,6 +120,46 @@ def GetQNTD(series, valor):
             valor = sum(mais_de_um_valor)
     return valor
 
+def GetTagByProduct(tag_atual):
+    # Coloca tudo em maiscula
+    tag_atual = tag_atual.upper()
+    # Chaves a serem buscadas na coluna modelo, deve retornar alguma das tags abaixo, caso contrário mantem a tag original
+    dic_produtos = {
+    'USINAGEM': 'CENTRO', 'TORNO': 'TORNO', 'TORNEAMENTO': 'TORNO',
+    'LASER': 'LASER','DOBRADEIRA':'DOBRADEIRA',
+    'INJETORA': 'INJETORA','EXTRUSÃO': 'EXTRUSORA','SOPRO': 'SOPRADORA'}
+    # Suposição inicial q não tem TAG
+    tag_final = 'SEM TAG'
+    for chave, valor in dic_produtos.items():
+        if chave in tag_atual:
+            tag_final = valor
+            break
+
+    return tag_final
+
+# A tag gerada pelo produto sobrescreve a tag antiga, se não tiver produto a tag se mantem
+def CompareTag(df_final, nova_tag, tag_produto):
+    condition = [df_final[tag_produto] == 'SEM TAG']
+    choice = [df_final[nova_tag]]
+    tag = np.select(condition, choice, default = df_final[tag_produto])
+    return tag
+
+# Coluna temporaria para definir as negociações sem tag e que são dos representantes de plástico
+def GetRepresentantesPlastico(series):
+    series = series.upper()
+    intersecao = 'SEM TAG'
+    representantes_plastico = ['REGINALDO', 'MAURUS','EDIVALDO','CARLOS', 'SPOTTI']
+    for representante in representantes_plastico:
+        if representante in series:
+            intersecao = 'INJETORA'
+            break
+    return intersecao
+
+def GetBlankTag(df_final, tag_rep, tag_atual):
+    condition = [(df_final[tag_rep] == 'INJETORA') & (df_final[tag_atual] == '[]')]
+    choice = [df_final[tag_rep]]
+    tag = np.select(condition, choice, default = 'SEM TAG')
+    return tag
 
 
 

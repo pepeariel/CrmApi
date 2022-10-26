@@ -1,7 +1,9 @@
 import DbConection
 from Pipeline import AsyncIO, GetMachineTypo, FiltraDatas, GetDictKey, GetQNTD
+from Pipeline import GetTagByProduct, CompareTag, GetRepresentantesPlastico, GetBlankTag
 import asyncio
 import pandas as pd
+import numpy as np
 import time
 import os
 from dotenv import load_dotenv, find_dotenv
@@ -36,11 +38,15 @@ if __name__ == '__main__':
     df_final['CriadaEm'] = pd.to_datetime(df_final['CriadaEm'],
                                           dayfirst=True,
                                           format='%Y-%m-%d %H:%M:%S').astype(str)
-
+    
+    # Aplica o tratamento na lista de tags:
+    # - Busca por palavras, como: INJETORA, CENTRO, TORNO, CÉLULA, ROBÔ, PERIFÉRICOS
+    # - Cria a coluna "nova_tag" para armazenar as novas tags
     df_final['ListTags'] = df_final['ListTags'].apply(GetDictKey, chave='Descricao')
-
-    df_final['NOVA_TAG'] = df_final['ListTags'].apply(GetMachineTypo, intersecao='OUTROS')
-
+    df_final['ListTags'] = df_final['ListTags'].astype(str)
+    df_final['nova_tag'] = df_final['ListTags'].apply(GetMachineTypo)
+    
+    # Mapa para renomear os representantes - está exatamente igual a tabela de metas e usuários no gongo
     replace_representantes = {
         'Edison Boscaini Griti': 'ÉDISON BOSCAINI',
         'Joel Sprenger': 'JOEL SPRENGER',
@@ -86,7 +92,7 @@ if __name__ == '__main__':
     cursor = con.cursor()
 
     # Pega o nome das colunas no banco
-    df_crm_banco = df = pd.read_sql("SELECT * FROM CRM_POWERBI LIMIT 1", con)
+    df_crm_banco = pd.read_sql("SELECT * FROM CRM_POWERBI LIMIT 1", con)
 
     # Seleciona e lineariza as colunas do tabela criada pela API (coloca todas as letras em minusculo e remove pontos)
     colunas_linearizadas = [str(n).lower().replace('.', '') for n in df_final.columns]
@@ -105,6 +111,26 @@ if __name__ == '__main__':
 
     # Pega apenas as colunas necessárias para envio ao banco de dados
     df_final = df_final.loc[(df_final['funilnegociacao'] == 'Negociações Máquinas') | (df_final['funilnegociacao'] == 'Negociações ROBÓTICA')]
+
+    # Cria uma coluna temporária com as tags (ja tem a tag de ACESSÓRIOS devido a funcao GetMachineType)
+    df_final['tag_periferico'] = df_final['nova_tag']
+
+    # Verifica se a negociação não possui tag, e muda conforme o representante -> cria uma coluna temporária
+    df_final['tag_rep_injecao'] = df_final['listnomeresponsaveis'].apply(GetRepresentantesPlastico) 
+    df_final['tag_rep_injecao_final'] = GetBlankTag(df_final, 'tag_rep_injecao', 'listtags')
+
+    # Junta as negociacoes tageadas com as sem tag -> cria uma coluna temporária: nova_tag
+    df_final['tag_rep_injecao_periferico_final'] = CompareTag(df_final,'tag_periferico', 'tag_rep_injecao_final')
+
+    # Verifica se existe Produto, nesse caso a tag não importa
+    df_final['tag_produto'] = df_final['modelo'].apply(GetTagByProduct)
+
+    # Cria a coluna com todas as condicionais 
+    df_final['nova_tag'] = CompareTag(df_final, 'tag_rep_injecao_periferico_final', 'tag_produto')
+
+    # Remove as colunas temporárias
+    df_final = df_final.drop(['tag_rep_injecao_final','tag_rep_injecao','tag_rep_injecao_periferico_final',
+                            'tag_produto','tag_periferico'], axis=1)
 
     # Transforma o Dataframe final em tupla -> formato para inserção no banco
     sql = [tuple(i) for i in df_final.to_numpy()]
